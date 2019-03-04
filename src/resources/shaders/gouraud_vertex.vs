@@ -88,7 +88,7 @@ void main()
 	vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
 	gl_Position = projectionMatrix * mvPos;
 
-	vec3 mvNorm = (modelViewMatrix * vec4(vertexNormal, 0.0)).xyz;
+	vec3 mvNorm = normalize(modelViewMatrix * vec4(vertexNormal, 0.0)).xyz;
 
 	color = vec4(ambientLight, 1.0);
 	color += calcDirectionalLight(directionalLight, mvPos.xyz, mvNorm);
