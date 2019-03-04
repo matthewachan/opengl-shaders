@@ -5,6 +5,9 @@ import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import java.io.InputStream;
+import java.io.FileInputStream;
+
 import c2g2.engine.GameItem;
 import c2g2.engine.IGameLogic;
 import c2g2.engine.MouseInput;
@@ -15,6 +18,7 @@ import c2g2.engine.graph.Material;
 import c2g2.engine.graph.Mesh;
 import c2g2.engine.graph.OBJLoader;
 import c2g2.engine.graph.PointLight;
+import c2g2.engine.graph.Texture;
 
 public class HelloGame implements IGameLogic {
 
@@ -61,8 +65,11 @@ public class HelloGame implements IGameLogic {
     public void init(Window window) throws Exception {
         renderer.init(window);
         float reflectance = 1f;
-        Mesh mesh = OBJLoader.loadMesh("src/resources/models/bunny.obj");
+        Mesh mesh = OBJLoader.loadMesh("src/resources/models/cube.obj");
+	InputStream png = new FileInputStream("src/resources/textures/grassblock.png");
+	Texture texture = new Texture(png);
         Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
+	material.setTexture(texture);
 
         mesh.setMaterial(material);
         GameItem gameItem = new GameItem(mesh);
