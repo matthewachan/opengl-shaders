@@ -135,11 +135,12 @@ public class Mesh {
 	}
 
 	public void render() {
+		// Add texture, if textured
 		if (this.material.isTextured())
 			glBindTexture(GL_TEXTURE_2D, this.material.getTexture().getId());
 
-			// Draw the mesh
-			glBindVertexArray(getVaoId());
+		// Draw the mesh
+		glBindVertexArray(getVaoId());
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
@@ -151,6 +152,8 @@ public class Mesh {
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
 		glBindVertexArray(0);
+
+		// Remove texture
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
