@@ -11,6 +11,11 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.Iterator;
+
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
@@ -30,6 +35,7 @@ public class Mesh {
 	private float[] textco;
 	private float[] norms;
 	private int[] inds;
+	private int[] bary;
 
 	public Mesh(){
 		this(new float[]{0.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,1.0f,0.0f,0.0f,1.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,1.0f,1.0f,1.0f,0.0f,1.0f,1.0f,1.0f}, 
@@ -41,16 +47,58 @@ public class Mesh {
 	// public setTexture(Texture t) {
 	// texture = t
 	// }
+	
+	private void extractBarycentric() {
+		Vector3f[] barycentric = new Vector3f[3];
+		barycentric[0] = new Vector3f(1, 0, 0);
+		barycentric[1] = new Vector3f(0, 1, 0);
+		barycentric[2] = new Vector3f(0, 0, 1);
+		// for (int i = 0; i < pos.length / 3; ++i) {
+		// 	Vector3f coord = barycentric[i % 3];
+		// 	System.out.println(i + " : " + coord);
+		// 	bary[3 * i] = (int) coord.x();
+		// 	bary[3 * i + 1] = (int) coord.y();
+		// 	bary[3 * i + 2] = (int) coord.z();
+		// }
+
+		TreeMap<Integer, Vector3f> map = new TreeMap<Integer, Vector3f>();
+
+		if (inds.length > 0) {
+			for (int index : inds)
+				map.put(index, barycentric[index % 3]);
+			Set s = map.entrySet();
+			Iterator it = s.iterator();
+			Set set = map.keySet();
+			while (it.hasNext()) {
+				// Unpack info from map
+				Map.Entry entry = (Map.Entry) it.next();
+
+				int vIdx = (Integer) entry.getKey();
+				Vector3f baryCoord = (Vector3f) entry.getValue();
+				System.out.println(vIdx + " : " + baryCoord);
+
+				bary[3 * vIdx] = (int) baryCoord.x();
+				bary[3 * vIdx + 1] = (int) baryCoord.y();
+				bary[3 * vIdx + 2] = (int) baryCoord.z();
+			}
+
+		}
+
+	}	
 
 	public void setMesh(float[] positions, float[] textCoords, float[] normals, int[] indices){
 		pos = positions;
 		textco = textCoords;
 		norms = normals;
 		inds = indices;
+		bary = new int[positions.length];
+		extractBarycentric();
+
 		FloatBuffer posBuffer = null;
 		FloatBuffer textCoordsBuffer = null;
 		FloatBuffer vecNormalsBuffer = null;
 		IntBuffer indicesBuffer = null;
+		IntBuffer barycentricBuffer = null;
 		System.out.println("create mesh:");
 		System.out.println("v: "+positions.length+" t: "+textCoords.length+" n: "+normals.length+" idx: "+indices.length);
 		try {
@@ -87,6 +135,15 @@ public class Mesh {
 			glBufferData(GL_ARRAY_BUFFER, vecNormalsBuffer, GL_STATIC_DRAW);
 			glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
 
+			// Barycentric coordinates VBO
+			vboId = glGenBuffers();
+			vboIdList.add(vboId);
+			barycentricBuffer = MemoryUtil.memAllocInt(bary.length);
+			barycentricBuffer.put(bary).flip();
+			glBindBuffer(GL_ARRAY_BUFFER, vboId);
+			glBufferData(GL_ARRAY_BUFFER, barycentricBuffer, GL_STATIC_DRAW);
+			glVertexAttribPointer(3, 3, GL_INT, false, 0, 0);
+
 			// Index VBO
 			vboId = glGenBuffers();
 			vboIdList.add(vboId);
@@ -107,6 +164,9 @@ public class Mesh {
 			}
 			if (vecNormalsBuffer != null) {
 				MemoryUtil.memFree(vecNormalsBuffer);
+			}
+			if (barycentricBuffer != null) {
+				MemoryUtil.memFree(barycentricBuffer);
 			}
 			if (indicesBuffer != null) {
 				MemoryUtil.memFree(indicesBuffer);
@@ -144,6 +204,7 @@ public class Mesh {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 
 		glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
 
@@ -151,6 +212,7 @@ public class Mesh {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 		glBindVertexArray(0);
 
 		// Remove texture

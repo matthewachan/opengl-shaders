@@ -147,14 +147,59 @@ public class Renderer {
         return shaderProgram;
     }
 
+    public ShaderProgram createCelShader() throws Exception {
+        ShaderProgram shaderProgram = new ShaderProgram();
+
+        shaderProgram.createVertexShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/cel_vertex.vs"))));
+        shaderProgram.createFragmentShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/cel_fragment.fs"))));
+        shaderProgram.link();
+
+        // Create uniforms for modelView and projection matrices and texture
+        shaderProgram.createUniform("projectionMatrix");
+        shaderProgram.createUniform("modelViewMatrix");
+        // shaderProgram.createUniform("texture_sampler");
+
+        // Create uniform for material
+        shaderProgram.createMaterialUniform("material");
+
+        // Create lighting related uniforms
+        // shaderProgram.createUniform("specularPower");
+        // shaderProgram.createUniform("ambientLight");
+        // shaderProgram.createPointLightUniform("pointLight");
+        shaderProgram.createDirectionalLightUniform("directionalLight");
+
+        return shaderProgram;
+    }
+    public ShaderProgram createWireframeShader() throws Exception {
+        ShaderProgram shaderProgram = new ShaderProgram();
+
+        shaderProgram.createVertexShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/wireframe_vertex.vs"))));
+        shaderProgram.createFragmentShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/wireframe_fragment.fs"))));
+        shaderProgram.link();
+
+        // Create uniforms for modelView and projection matrices and texture
+        shaderProgram.createUniform("projectionMatrix");
+        shaderProgram.createUniform("modelViewMatrix");
+
+        // Create uniform for material
+        shaderProgram.createMaterialUniform("material");
+
+        // Create lighting related uniforms
+        shaderProgram.createUniform("ambientLight");
+
+        return shaderProgram;
+    }
+
     public void init(Window window) throws Exception {
         // Create our example shader
         shaderProgramList.put("phong", createPhongShader());
         shaderProgramList.put("skeleton", createSkeletonShader());
 
         // Student code
+	shaderProgramList.put("cel", createCelShader());
         shaderProgramList.put("gouraud", createGouraudShader());
         shaderProgramList.put("texture", createTextureShader());
+	// shaderProgramList.put("wireframe", createWireframeShader());
 
     }
 
@@ -270,6 +315,37 @@ public class Renderer {
             shaderProgram.setUniform("directionalLight", currDirLight);
 
             shaderProgram.setUniform("texture_sampler", 0);
+        }
+	else if(currentShader.equals("cel")) {
+            shaderProgram.setUniform("projectionMatrix", projectionMatrix);
+
+            // Update Light Uniforms
+            // shaderProgram.setUniform("ambientLight", ambientLight);
+            // shaderProgram.setUniform("specularPower", specularPower);
+            // Get a copy of the point light object and transform its position to view coordinates
+            // PointLight currPointLight = new PointLight(pointLight);
+            // Vector3f lightPos = currPointLight.getPosition();
+            // Vector4f aux = new Vector4f(lightPos, 1);
+            // aux.mul(viewMatrix);
+            // lightPos.x = aux.x;
+            // lightPos.y = aux.y;
+            // lightPos.z = aux.z;
+            // shaderProgram.setUniform("pointLight", currPointLight);
+
+            // Get a copy of the directional light object and transform its position to view coordinates
+            DirectionalLight currDirLight = new DirectionalLight(directionalLight);
+            Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
+            dir.mul(viewMatrix);
+            currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
+            shaderProgram.setUniform("directionalLight", currDirLight);
+
+            // shaderProgram.setUniform("texture_sampler", 0);
+        }
+        else if(currentShader.equals("wireframe")) {
+            shaderProgram.setUniform("projectionMatrix", projectionMatrix);
+
+            // Update Light Uniforms
+            shaderProgram.setUniform("ambientLight", ambientLight);
         }
 
         // Render each gameItem
