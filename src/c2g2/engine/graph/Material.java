@@ -12,7 +12,11 @@ public class Material {
 
 	private float reflectance;
 
+	// RGB texture mapping
 	private Texture texture;
+
+	// Normal texture mapping
+	private Texture normTexture;
 
 	public Material() {
 		colour = DEFAULT_COLOUR;
@@ -31,6 +35,14 @@ public class Material {
 
 	public Texture getTexture() {
 		return texture;
+	}
+
+	public void setNormTexture(Texture texture) {
+		this.normTexture = texture;
+	}
+
+	public Texture getNormTexture() {
+		return normTexture;
 	}
 
 	public Vector3f getColour() {
@@ -53,4 +65,7 @@ public class Material {
 		return texture != null;
 	}
 
+	public boolean hasNormTexture() {
+		return normTexture != null;
+	}
 }

@@ -29,8 +29,6 @@ public class Mesh {
 
 	private Material material;
 
-	// private Texture texture;
-
 	private float[] pos;
 	private float[] textco;
 	private float[] norms;
@@ -196,8 +194,17 @@ public class Mesh {
 
 	public void render() {
 		// Add texture, if textured
-		if (this.material.isTextured())
+		if (this.material.isTextured()) {
+			// System.out.println("RGB texture unit: " + this.material.getTexture().getTextureUnit());
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, this.material.getTexture().getId());
+		}
+		if (this.material.hasNormTexture()) {
+			// System.out.println("Norm texture unit: " + this.material.getNormTexture().getTextureUnit());
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, this.material.getNormTexture().getId());
+		}
+
 
 		// Draw the mesh
 		glBindVertexArray(getVaoId());
@@ -216,6 +223,9 @@ public class Mesh {
 		glBindVertexArray(0);
 
 		// Remove texture
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 

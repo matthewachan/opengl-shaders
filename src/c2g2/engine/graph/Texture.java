@@ -5,6 +5,9 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class Texture {
@@ -15,11 +18,13 @@ public class Texture {
 
     private final int height;
 
-    public Texture(String fileName) throws Exception {
-        this(Texture.class.getResourceAsStream(fileName));
+    private final int textureUnit;
+
+    public Texture(String fileName, int textureUnit) throws Exception {
+        this(Texture.class.getResourceAsStream(fileName), textureUnit);
     }
 
-    public Texture(InputStream is) throws Exception {
+    public Texture(InputStream is, int textureUnit) throws Exception {
         // Load Texture file
         PNGDecoder decoder = new PNGDecoder(is);
 
@@ -27,13 +32,19 @@ public class Texture {
         this.height = decoder.getHeight();
 
         // Load texture contents into a byte buffer
-        ByteBuffer buf = ByteBuffer.allocateDirect(
+	ByteBuffer buf = ByteBuffer.allocateDirect(
                 4 * decoder.getWidth() * decoder.getHeight());
         decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
         buf.flip();
 
         // Create a new OpenGL texture
         this.id = glGenTextures();
+	System.out.println("Texture id: " + this.id);
+
+	// Set the active texture unit
+	this.textureUnit = textureUnit;
+	glActiveTexture(textureUnit);
+
         // Bind the texture
         glBindTexture(GL_TEXTURE_2D, this.id);
 
@@ -46,6 +57,10 @@ public class Texture {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
         // Generate Mip Map
         glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
+    public int getTextureUnit() {
+	    return this.textureUnit;
     }
 
     public int getWidth() {

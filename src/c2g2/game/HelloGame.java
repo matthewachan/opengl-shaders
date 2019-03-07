@@ -5,6 +5,10 @@ import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
+
 import java.io.InputStream;
 import java.io.FileInputStream;
 
@@ -66,10 +70,15 @@ public class HelloGame implements IGameLogic {
         renderer.init(window);
         float reflectance = 1f;
         Mesh mesh = OBJLoader.loadMesh("src/resources/models/cube.obj");
-	InputStream png = new FileInputStream("src/resources/textures/grassblock.png");
-	Texture texture = new Texture(png);
+
+	// InputStream grassblock = new FileInputStream("src/resources/textures/grassblock.png");
+	Texture rgbTexture = new Texture("/src/resources/textures/grassblock.png", GL_TEXTURE0);
+	// InputStream pattern = new FileInputStream("src/resources/textures/normal.png");
+	Texture normTexture = new Texture("/src/resources/textures/normal.png", GL_TEXTURE1);
+
         Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);
-	material.setTexture(texture);
+	material.setTexture(rgbTexture);
+	material.setNormTexture(normTexture);
 
         mesh.setMaterial(material);
         GameItem gameItem = new GameItem(mesh);

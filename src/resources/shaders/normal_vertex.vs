@@ -1,4 +1,3 @@
-
 #version 330
 
 layout (location=0) in vec3 position;
@@ -16,7 +15,6 @@ void main()
 {
     vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
     gl_Position = projectionMatrix * mvPos;
-
     outTexCoord = texCoord;
     mvVertexNormal = normalize(modelViewMatrix * vec4(vertexNormal, 0.0)).xyz;
     mvVertexPos = mvPos.xyz;
