@@ -189,6 +189,25 @@ public class Renderer {
 
         return shaderProgram;
     }
+    public ShaderProgram createCheckerboardShader() throws Exception {
+        ShaderProgram shaderProgram = new ShaderProgram();
+
+        shaderProgram.createVertexShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/checkerboard_vertex.vs"))));
+        shaderProgram.createFragmentShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/checkerboard_fragment.fs"))));
+        shaderProgram.link();
+
+        // Create uniforms for modelView and projection matrices and texture
+        shaderProgram.createUniform("projectionMatrix");
+        shaderProgram.createUniform("modelViewMatrix");
+
+        // Create uniform for material
+        shaderProgram.createMaterialUniform("material");
+
+        // Create lighting related uniforms
+        shaderProgram.createUniform("ambientLight");
+
+        return shaderProgram;
+    }
 
     public void init(Window window) throws Exception {
         // Create our example shader
@@ -196,6 +215,7 @@ public class Renderer {
         shaderProgramList.put("skeleton", createSkeletonShader());
 
         // Student code
+	shaderProgramList.put("checkerboard", createCheckerboardShader());
 	shaderProgramList.put("cel", createCelShader());
         shaderProgramList.put("gouraud", createGouraudShader());
         shaderProgramList.put("texture", createTextureShader());
@@ -315,6 +335,12 @@ public class Renderer {
             shaderProgram.setUniform("directionalLight", currDirLight);
 
             shaderProgram.setUniform("texture_sampler", 0);
+        }
+        else if(currentShader.equals("checkerboard")) {
+            shaderProgram.setUniform("projectionMatrix", projectionMatrix);
+
+            // Update Light Uniforms
+            shaderProgram.setUniform("ambientLight", ambientLight);
         }
 	else if(currentShader.equals("cel")) {
             shaderProgram.setUniform("projectionMatrix", projectionMatrix);

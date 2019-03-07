@@ -65,7 +65,7 @@ public class HelloGame implements IGameLogic {
     public void init(Window window) throws Exception {
         renderer.init(window);
         float reflectance = 1f;
-        Mesh mesh = OBJLoader.loadMesh("src/resources/models/bunny.obj");
+        Mesh mesh = OBJLoader.loadMesh("src/resources/models/cube.obj");
 	InputStream png = new FileInputStream("src/resources/textures/grassblock.png");
 	Texture texture = new Texture(png);
         Material material = new Material(new Vector3f(0.2f, 0.5f, 0.5f), reflectance);

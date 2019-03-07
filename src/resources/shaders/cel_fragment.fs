@@ -6,22 +6,6 @@ in vec3 mvVertexPos;
 
 out vec4 fragColor;
 
-/* struct Attenuation */
-/* { */
-/* 	float constant; */
-/* 	float linear; */
-/* 	float exponent; */
-/* }; */
-
-/* struct PointLight */
-/* { */
-/* 	vec3 colour; */
-/* 	// Light position is assumed to be in view coordinates */
-/* 	vec3 position; */
-/* 	float intensity; */
-/* 	Attenuation att; */
-/* }; */
-
 struct DirectionalLight
 {
 	vec3 colour;
@@ -36,11 +20,7 @@ struct Material
 	float reflectance;
 };
 
-/* uniform sampler2D texture_sampler; */
-/* uniform vec3 ambientLight; */
-/* uniform float specularPower; */
 uniform Material material;
-/* uniform PointLight pointLight; */
 uniform DirectionalLight directionalLight;
 
 void main() {
