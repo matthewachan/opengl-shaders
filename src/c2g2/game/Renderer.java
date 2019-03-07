@@ -201,6 +201,7 @@ public class Renderer {
         ShaderProgram shaderProgram = new ShaderProgram();
 
         shaderProgram.createVertexShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/wireframe_vertex.vs"))));
+        shaderProgram.createGeometryShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/wireframe_geometry.gs"))));
         shaderProgram.createFragmentShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/wireframe_fragment.fs"))));
         shaderProgram.link();
 
@@ -242,12 +243,12 @@ public class Renderer {
         shaderProgramList.put("skeleton", createSkeletonShader());
 
         // Student code
+	shaderProgramList.put("wireframe", createWireframeShader());
         shaderProgramList.put("normal", createNormalShader());
 	shaderProgramList.put("checkerboard", createCheckerboardShader());
 	shaderProgramList.put("cel", createCelShader());
         shaderProgramList.put("gouraud", createGouraudShader());
         shaderProgramList.put("texture", createTextureShader());
-	// shaderProgramList.put("wireframe", createWireframeShader());
 
     }
 

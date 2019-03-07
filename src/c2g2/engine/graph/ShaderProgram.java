@@ -6,6 +6,8 @@ import java.util.Map;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL32.*;
 import org.lwjgl.system.MemoryStack;
 
 public class ShaderProgram {
@@ -13,6 +15,8 @@ public class ShaderProgram {
     private final int programId;
 
     private int vertexShaderId;
+
+    private int geometryShaderId;
 
     private int fragmentShaderId;
 
@@ -100,6 +104,10 @@ public class ShaderProgram {
 
     public void createVertexShader(String shaderCode) throws Exception {
         vertexShaderId = createShader(shaderCode, GL_VERTEX_SHADER);
+    }
+
+    public void createGeometryShader(String shaderCode) throws Exception {
+        geometryShaderId = createShader(shaderCode, GL_GEOMETRY_SHADER);
     }
 
     public void createFragmentShader(String shaderCode) throws Exception {
