@@ -19,6 +19,7 @@
         <fileset dir="${basedir}/lib">
             <include name="**/*.jar"/>
         </fileset>
+	<pathelement path="${basedir}"/>
     </path>
     <!-- ========================================================================= -->   
     <!--                                    Init                                   -->   

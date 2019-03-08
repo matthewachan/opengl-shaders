@@ -47,13 +47,13 @@ vec4 calcLightColour(vec3 light_colour, float light_intensity, vec3 position, ve
 	// Diffuse Light
 	float diffuseFactor = max(dot(normal, to_light_dir), 0.0);
 	if (diffuseFactor > 0.85)
-		diffuseFactor = 2.0;
-	else if (diffuseFactor > 0.5)
 		diffuseFactor = 1.6;
-	else if (diffuseFactor > 0.25)
+	else if (diffuseFactor > 0.5)
 		diffuseFactor = 1.2;
+	else if (diffuseFactor > 0.25)
+		diffuseFactor = 0.9;
 	else
-		diffuseFactor = 0.7;
+		diffuseFactor = 0.4;
 	diffuseColour = vec4(light_colour, 1.0) * light_intensity * diffuseFactor;
 
 	// Specular Light
@@ -93,9 +93,6 @@ void main() {
 	vec4 totalLight = vec4(ambientLight, 1.0);
 	totalLight += calcDirectionalLight(directionalLight, mvVertexPos, mvVertexNormal);
 	totalLight += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
-
-	
-
 
 	if (dot(mvVertexNormal, -mvVertexPos) <= 0.2)
 		fragColor = vec4(1,1,1,1);
