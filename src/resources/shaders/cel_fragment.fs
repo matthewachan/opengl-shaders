@@ -46,6 +46,8 @@ vec4 calcLightColour(vec3 light_colour, float light_intensity, vec3 position, ve
 
 	// Diffuse Light
 	float diffuseFactor = max(dot(normal, to_light_dir), 0.0);
+
+	// Threshold diffuse factor for cartoon effect
 	if (diffuseFactor > 0.85)
 		diffuseFactor = 1.6;
 	else if (diffuseFactor > 0.5)
@@ -54,6 +56,7 @@ vec4 calcLightColour(vec3 light_colour, float light_intensity, vec3 position, ve
 		diffuseFactor = 0.9;
 	else
 		diffuseFactor = 0.4;
+
 	diffuseColour = vec4(light_colour, 1.0) * light_intensity * diffuseFactor;
 
 	// Specular Light
@@ -86,7 +89,6 @@ vec4 calcDirectionalLight(DirectionalLight light, vec3 position, vec3 normal)
 }
 
 void main() {
-	
 	vec4 baseColour = vec4(material.colour, 1);
 	vec4 color;
 
@@ -94,9 +96,9 @@ void main() {
 	totalLight += calcDirectionalLight(directionalLight, mvVertexPos, mvVertexNormal);
 	totalLight += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); 
 
+	// Add white outlines
 	if (dot(mvVertexNormal, -mvVertexPos) <= 0.2)
 		fragColor = vec4(1,1,1,1);
 	else
 		fragColor = baseColour * totalLight; 
-
 }

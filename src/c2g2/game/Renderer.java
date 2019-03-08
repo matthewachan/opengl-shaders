@@ -98,11 +98,6 @@ public class Renderer {
         return shaderProgram;
     }
 
-    /* Student code
-    public ShaderProgram createMyShader() throws Exception {
-        // ...
-    }
-    */
     public ShaderProgram createGouraudShader() throws Exception {
         ShaderProgram shaderProgram = new ShaderProgram();
 
@@ -184,7 +179,6 @@ public class Renderer {
         // Create uniforms for modelView and projection matrices and texture
         shaderProgram.createUniform("projectionMatrix");
         shaderProgram.createUniform("modelViewMatrix");
-        // shaderProgram.createUniform("texture_sampler");
 
         // Create uniform for material
         shaderProgram.createMaterialUniform("material");
@@ -252,7 +246,6 @@ public class Renderer {
         shaderProgram.createMaterialUniform("material");
 
         // Create lighting related uniforms
-        // shaderProgram.createUniform("specularPower");
         shaderProgram.createUniform("ambientLight");
         shaderProgram.createPointLightUniform("pointLight");
         shaderProgram.createDirectionalLightUniform("directionalLight");
@@ -273,7 +266,6 @@ public class Renderer {
 	shaderProgramList.put("checkerboard", createCheckerboardShader());
         shaderProgramList.put("gouraud", createGouraudShader());
         shaderProgramList.put("texture", createTextureShader());
-
     }
 
     public int getNumShaders() { return shaderProgramList.size(); }
@@ -336,11 +328,7 @@ public class Renderer {
             // Update Light Uniforms
             shaderProgram.setUniform("ambientLight", ambientLight);
         }
-        /* Student code
-        else if(currentShader.equals("my_shader")) {
-            // ...
-        }
-        */
+
 	else if (currentShader.equals("gouraud")) {
             shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
@@ -425,7 +413,6 @@ public class Renderer {
 
             // Update Light Uniforms
             shaderProgram.setUniform("ambientLight", ambientLight);
-            // shaderProgram.setUniform("specularPower", specularPower);
             // Get a copy of the point light object and transform its position to view coordinates
             PointLight currPointLight = new PointLight(pointLight);
             Vector3f lightPos = currPointLight.getPosition();
@@ -465,8 +452,6 @@ public class Renderer {
             dir.mul(viewMatrix);
             currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
             shaderProgram.setUniform("directionalLight", currDirLight);
-
-            // shaderProgram.setUniform("texture_sampler", 0);
         }
         else if(currentShader.equals("wireframe")) {
             shaderProgram.setUniform("projectionMatrix", projectionMatrix);

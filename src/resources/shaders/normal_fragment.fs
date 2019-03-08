@@ -86,23 +86,11 @@ void main()
 {
 	vec4 baseColour = vec4(material.colour, 1);
 
-	/* if ( material.useColour == 1 ) */
-	/* { */
-	/* 	baseColour = vec4(material.colour, 1); */
-	/* } */
-	/* else */
-	/* { */
-		/* baseColour = texture(texture_sampler, outTexCoord); */
-	/* } */
-	/* vec4 normal = texture(texture_sampler, outTexCoord); */
-	/* normal = normalize(normal * 2.0 - 1.0); */
-
 	vec4 normal = texture(norm_sampler, outTexCoord);
+
 	vec4 totalLight = vec4(ambientLight, 1.0);
 	totalLight += calcDirectionalLight(directionalLight, mvVertexPos, vec3(normal));
 	totalLight += calcPointLight(pointLight, mvVertexPos, vec3(normal)); 
-	/* totalLight += calcDirectionalLight(directionalLight, mvVertexPos, mvVertexNormal); */
-	/* totalLight += calcPointLight(pointLight, mvVertexPos, mvVertexNormal); */ 
 
 	fragColor = baseColour * totalLight;
 }

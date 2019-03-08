@@ -1,7 +1,5 @@
 package c2g2.engine.graph;
 
-// import c2g2.engine.graph.Texture;
-
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -33,7 +31,6 @@ public class Mesh {
 	private float[] textco;
 	private float[] norms;
 	private int[] inds;
-	private int[] bary;
 
 	public Mesh(){
 		this(new float[]{0.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,1.0f,0.0f,0.0f,1.0f,1.0f,1.0f,0.0f,0.0f,1.0f,0.0f,1.0f,1.0f,1.0f,0.0f,1.0f,1.0f,1.0f}, 
@@ -42,61 +39,16 @@ public class Mesh {
 				new int[]{0,6,4,0,2,6,0,3,2,0,1,3,2,7,6,2,3,7,4,6,7,4,7,5,0,4,5,0,5,1,1,5,7,1,7,3});
 	}
 
-	// public setTexture(Texture t) {
-	// texture = t
-	// }
-	
-	private void extractBarycentric() {
-		Vector3f[] barycentric = new Vector3f[3];
-		barycentric[0] = new Vector3f(1, 0, 0);
-		barycentric[1] = new Vector3f(0, 1, 0);
-		barycentric[2] = new Vector3f(0, 0, 1);
-		// for (int i = 0; i < pos.length / 3; ++i) {
-		// 	Vector3f coord = barycentric[i % 3];
-		// 	System.out.println(i + " : " + coord);
-		// 	bary[3 * i] = (int) coord.x();
-		// 	bary[3 * i + 1] = (int) coord.y();
-		// 	bary[3 * i + 2] = (int) coord.z();
-		// }
-
-		TreeMap<Integer, Vector3f> map = new TreeMap<Integer, Vector3f>();
-
-		if (inds.length > 0) {
-			for (int index : inds)
-				map.put(index, barycentric[index % 3]);
-			Set s = map.entrySet();
-			Iterator it = s.iterator();
-			Set set = map.keySet();
-			while (it.hasNext()) {
-				// Unpack info from map
-				Map.Entry entry = (Map.Entry) it.next();
-
-				int vIdx = (Integer) entry.getKey();
-				Vector3f baryCoord = (Vector3f) entry.getValue();
-				System.out.println(vIdx + " : " + baryCoord);
-
-				bary[3 * vIdx] = (int) baryCoord.x();
-				bary[3 * vIdx + 1] = (int) baryCoord.y();
-				bary[3 * vIdx + 2] = (int) baryCoord.z();
-			}
-
-		}
-
-	}	
-
 	public void setMesh(float[] positions, float[] textCoords, float[] normals, int[] indices){
 		pos = positions;
 		textco = textCoords;
 		norms = normals;
 		inds = indices;
-		bary = new int[positions.length];
-		extractBarycentric();
 
 		FloatBuffer posBuffer = null;
 		FloatBuffer textCoordsBuffer = null;
 		FloatBuffer vecNormalsBuffer = null;
 		IntBuffer indicesBuffer = null;
-		IntBuffer barycentricBuffer = null;
 		System.out.println("create mesh:");
 		System.out.println("v: "+positions.length+" t: "+textCoords.length+" n: "+normals.length+" idx: "+indices.length);
 		try {
@@ -123,7 +75,7 @@ public class Mesh {
 			glBindBuffer(GL_ARRAY_BUFFER, vboId);
 			glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
 			glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
-
+			
 			// Vertex normals VBO
 			vboId = glGenBuffers();
 			vboIdList.add(vboId);
@@ -132,15 +84,6 @@ public class Mesh {
 			glBindBuffer(GL_ARRAY_BUFFER, vboId);
 			glBufferData(GL_ARRAY_BUFFER, vecNormalsBuffer, GL_STATIC_DRAW);
 			glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
-
-			// Barycentric coordinates VBO
-			vboId = glGenBuffers();
-			vboIdList.add(vboId);
-			barycentricBuffer = MemoryUtil.memAllocInt(bary.length);
-			barycentricBuffer.put(bary).flip();
-			glBindBuffer(GL_ARRAY_BUFFER, vboId);
-			glBufferData(GL_ARRAY_BUFFER, barycentricBuffer, GL_STATIC_DRAW);
-			glVertexAttribPointer(3, 3, GL_INT, false, 0, 0);
 
 			// Index VBO
 			vboId = glGenBuffers();
@@ -162,9 +105,6 @@ public class Mesh {
 			}
 			if (vecNormalsBuffer != null) {
 				MemoryUtil.memFree(vecNormalsBuffer);
-			}
-			if (barycentricBuffer != null) {
-				MemoryUtil.memFree(barycentricBuffer);
 			}
 			if (indicesBuffer != null) {
 				MemoryUtil.memFree(indicesBuffer);
@@ -193,14 +133,12 @@ public class Mesh {
 	}
 
 	public void render() {
-		// Add texture, if textured
+		// Bind textures
 		if (this.material.isTextured()) {
-			// System.out.println("RGB texture unit: " + this.material.getTexture().getTextureUnit());
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, this.material.getTexture().getId());
 		}
 		if (this.material.hasNormTexture()) {
-			// System.out.println("Norm texture unit: " + this.material.getNormTexture().getTextureUnit());
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, this.material.getNormTexture().getId());
 		}
@@ -211,7 +149,6 @@ public class Mesh {
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
-		glEnableVertexAttribArray(3);
 
 		glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
 
@@ -219,10 +156,9 @@ public class Mesh {
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
-		glEnableVertexAttribArray(3);
 		glBindVertexArray(0);
 
-		// Remove texture
+		// Unbind textures 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glActiveTexture(GL_TEXTURE1);

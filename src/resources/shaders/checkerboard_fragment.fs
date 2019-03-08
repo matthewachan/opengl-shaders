@@ -28,6 +28,7 @@ void main()
 	vec4 black = vec4(0.0, 0.0, 0.0, 1.0);
 	vec4 white = vec4(1.0, 1.0, 1.0, 1.0);
 
+	// Checkerboard pattern
 	if (row % 2 == 0) {
 		if (col % 2 == 0)
 			fragColor = black;
@@ -40,7 +41,9 @@ void main()
 		else
 			fragColor = black;
 	}
+
 	vec4 baseColour = vec4(material.colour, 1.0);
 	vec4 totalLight = vec4(ambientLight, 1.0);
+
 	fragColor *= totalLight;
 }
