@@ -117,4 +117,4 @@ This shading technique makes objects look cartoon-like and is used in games like
 - For wireframe: [http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/](http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/)
 - For normal mapping: [https://learnopengl.com/Advanced-Lighting/Normal-Mapping](https://learnopengl.com/Advanced-Lighting/Normal-Mapping)
 - For cel shading: [http://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/](http://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/)
--For hatching: [https://www.eecs.yorku.ca/course_archive/2011-12/W/4431/lectures/Day20.pptx](https://www.eecs.yorku.ca/course_archive/2011-12/W/4431/lectures/Day20.pptx)
+- For hatching: [https://www.eecs.yorku.ca/course_archive/2011-12/W/4431/lectures/Day20.pptx](https://www.eecs.yorku.ca/course_archive/2011-12/W/4431/lectures/Day20.pptx)
