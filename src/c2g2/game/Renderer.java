@@ -253,12 +253,36 @@ public class Renderer {
         return shaderProgram;
     }
 
+    public ShaderProgram createGoochShader() throws Exception {
+        ShaderProgram shaderProgram = new ShaderProgram();
+
+        shaderProgram.createVertexShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/gooch_vertex.vs"))));
+        shaderProgram.createFragmentShader(new String(Files.readAllBytes(Paths.get("src/resources/shaders/gooch_fragment.fs"))));
+        shaderProgram.link();
+
+        // Create uniforms for modelView and projection matrices and texture
+        shaderProgram.createUniform("projectionMatrix");
+        shaderProgram.createUniform("modelViewMatrix");
+        // shaderProgram.createUniform("texture_sampler");
+
+        // Create uniform for material
+        shaderProgram.createMaterialUniform("material");
+
+        // Create lighting related uniforms
+        shaderProgram.createUniform("specularPower");
+        shaderProgram.createUniform("ambientLight");
+        shaderProgram.createDirectionalLightUniform("directionalLight");
+
+        return shaderProgram;
+    }
+
     public void init(Window window) throws Exception {
         // Create our example shader
         shaderProgramList.put("phong", createPhongShader());
         shaderProgramList.put("skeleton", createSkeletonShader());
 
         // Student code
+	shaderProgramList.put("gooch", createGoochShader());
 	shaderProgramList.put("cel", createCelShader());
         shaderProgramList.put("hatching", createHatchingShader());
 	shaderProgramList.put("wireframe", createWireframeShader());
@@ -458,6 +482,22 @@ public class Renderer {
 
             // Update Light Uniforms
             shaderProgram.setUniform("ambientLight", ambientLight);
+        }
+	else if(currentShader.equals("gooch")) {
+            shaderProgram.setUniform("projectionMatrix", projectionMatrix);
+
+            // Update Light Uniforms
+            shaderProgram.setUniform("ambientLight", ambientLight);
+            shaderProgram.setUniform("specularPower", specularPower);
+
+            // Get a copy of the directional light object and transform its position to view coordinates
+            DirectionalLight currDirLight = new DirectionalLight(directionalLight);
+            Vector4f dir = new Vector4f(currDirLight.getDirection(), 0);
+            dir.mul(viewMatrix);
+            currDirLight.setDirection(new Vector3f(dir.x, dir.y, dir.z));
+            shaderProgram.setUniform("directionalLight", currDirLight);
+
+            // shaderProgram.setUniform("texture_sampler", 0);
         }
 
         // Render each gameItem

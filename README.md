@@ -13,6 +13,9 @@ Here is a list of the shaders that are currently included in this program.
 - [Checkerboard Shader](#checkerboard-shader)
 - [Cross-hatching Shader](#cross-hatching-shader)
 - [Cel Shader](#cel-shader)
+- [Gooch Shader](#gooch-shader)
+
+## Demo
 
 ![](etc/demo.gif)
 
@@ -113,8 +116,17 @@ This shading technique makes objects look cartoon-like and is used in games like
 
 ![](etc/cel.gif)
 
+### Gooch Shader
+Gooch shading is a non-photorealistic rendering method developed by Amy Gooch at the University of Utah. More information about the shader can be found [here](https://en.wikipedia.org/wiki/Gooch_shading).
+
+Object fragments whose normals point away from the light source receive a cool color shading, while fragments whose normals point in the same direction as the light source receive a warm color shading.
+
+**Note**: I used [this](https://www.eecs.yorku.ca/course_archive/2011-12/W/4431/lectures/Day20.pptx) resource for creating the Gooch shader.
+
+![](etc/gooch.gif)
+
 ## References
 - For wireframe: [http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/](http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/)
 - For normal mapping: [https://learnopengl.com/Advanced-Lighting/Normal-Mapping](https://learnopengl.com/Advanced-Lighting/Normal-Mapping)
 - For cel shading: [http://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/](http://www.lighthouse3d.com/tutorials/glsl-12-tutorial/toon-shader-version-ii/)
-- For hatching: [https://www.eecs.yorku.ca/course_archive/2011-12/W/4431/lectures/Day20.pptx](https://www.eecs.yorku.ca/course_archive/2011-12/W/4431/lectures/Day20.pptx)
+- For hatching and gooch: [https://www.eecs.yorku.ca/course_archive/2011-12/W/4431/lectures/Day20.pptx](https://www.eecs.yorku.ca/course_archive/2011-12/W/4431/lectures/Day20.pptx)
